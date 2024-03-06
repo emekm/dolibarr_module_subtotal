@@ -3,10 +3,11 @@ All notable changes to this project will be documented in this file.
 
 # [Unreleased]
 
-
+***emekconnect fork from ATM-Consulting 3.23.6***
 
 # Release 3.23 - 18/12/2023
 
+- FIX : Create invoice deposit line same order with percent : FIX add Line subtotal and free text  - *20/02/2024* - 3.23.6
 - FIX : Display subtotal with tax when global PDF_PROPAL_SHOW_PRICE_INCL_TAX is enable - *15/01/2024* - 3.23.5
 - FIX : php 8.2 warning - *15/01/2024* - 3.23.4
 - FIX : colum in card if global 'MAIN_NO_INPUT_PRICE_WITH_TAX' is enable

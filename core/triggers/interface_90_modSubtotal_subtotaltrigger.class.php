@@ -1,6 +1,6 @@
 <?php
 /* <one line to give the program's name and a brief idea of what it does.>
- * Copyright (C) 2013 ATM Consulting <support@atm-consulting.fr>
+ * Copyright (C) 2013 emekconnect fork from ATM Consulting <support@atm-consulting.fr>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -156,8 +156,12 @@ class Interfacesubtotaltrigger extends DolibarrTriggers
      */
     public function runTrigger($action, $object, User $user, Translate $langs, Conf $conf)
     {
-
+		global $user;
        #COMPATIBILITÉ V16
+		require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
+		require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+
+
         if ($action == 'LINEBILL_UPDATE'){
 			$action = 'LINEBILL_MODIFY';
 		}
@@ -173,7 +177,24 @@ class Interfacesubtotaltrigger extends DolibarrTriggers
 		if ($action == 'LINEBILL_SUPPLIER_UPDATE'){
 			$action = 'LINEBILL_SUPPLIER_MODIFY';
 		}
-
+		if ($action === 'LINEBILL_INSERT' && $object->element === 'facturedet'){
+			if( strtolower(Commande::class) == $object->origin){
+				$orderLine = new OrderLine($this->db);
+				$invoice = new Facture($this->db);
+				$invoice->fetch($object->fk_facture);
+				if ($invoice->type == Facture::TYPE_DEPOSIT){
+					$orderLine->fetch($object->origin_id);
+					if (TSubtotal::isSubtotal($orderLine)) {
+						TSubtotal::addTotal($invoice, $object->label, 0);
+						$object->delete($user);
+					}
+					if (TSubtotal::isFreeText($orderLine)) {
+						$object->qty = 50;
+						$object->update($user);
+					}
+				}
+			}
+		}
 		// Put here code you want to execute when a Dolibarr business events occurs.
         // Data and type of action are stored into $object and $action
         // Users
@@ -276,7 +297,7 @@ class Interfacesubtotaltrigger extends DolibarrTriggers
             }
 		    else
             {
-			    $subtotal_add_title_bloc_from_orderstoinvoice = (GETPOST('subtotal_add_title_bloc_from_orderstoinvoice', 'none') || GETPOST('createbills_onebythird', 'int'));
+			    $subtotal_add_title_bloc_from_orderstoinvoice = (GETPOST('subtotal_add_title_bloc_from_orderstoinvoice', 'none') && GETPOST('createbills_onebythird', 'int'));
 			    if (!empty($subtotal_add_title_bloc_from_orderstoinvoice))
 			    {
 				    global $subtotal_current_rang, $subtotal_bloc_previous_fk_commande, $subtotal_bloc_already_add_title, $subtotal_bloc_already_add_st;
@@ -404,8 +425,7 @@ class Interfacesubtotaltrigger extends DolibarrTriggers
 				}
 			}
 		}
-
-		// Les lignes libres (y compris les sous-totaux) créées à partir d'une facture modèle n'ont pas la TVA de la ligne du modèle mais la TVA par défaut
+			// Les lignes libres (y compris les sous-totaux) créées à partir d'une facture modèle n'ont pas la TVA de la ligne du modèle mais la TVA par défaut
 		if ($action == 'BILL_CREATE' && $object->fac_rec > 0) {
 			dol_syslog("Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id);
 
@@ -802,7 +822,6 @@ class Interfacesubtotaltrigger extends DolibarrTriggers
                 "Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id
             );
         } elseif ($action == 'LINEBILL_INSERT') {
-
         	dol_syslog(
                 "Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id
             );

@@ -1,6 +1,6 @@
 <?php
 /* <Add title and subtotal in propal, order, invoice.>
- * Copyright (C) 2013 ATM Consulting <support@atm-consulting.fr>
+ * Copyright (C) 2013 emekconnect fork from ATM Consulting <support@atm-consulting.fr>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,18 +43,18 @@ class modSubtotal extends DolibarrModules
 
         $this->db = $db;
 
-		$this->editor_name = 'ATM Consulting';
+		$this->editor_name = 'emekconnect fork from ATM Consulting';
         // Id for module (must be unique).
         // Use a free id here
         // (See in Home -> System information -> Dolibarr for list of used modules id).
-        $this->numero = 104777; // 104000 to 104999 for ATM CONSULTING
+        $this->numero = 104777; // 104000 to 104999 for emekconnect fork from ATM Consulting
         // Key text used to identify module (for permissions, menus, etc...)
         $this->rights_class = 'subtotal';
 
         // Family can be 'crm','financial','hr','projects','products','ecm','technic','other'
         // It is used to group modules in module setup page
 
-        $this->family = "ATM Consulting - CRM";
+        $this->family = "emekconnect fork from ATM Consulting subtotal";
 
         // Module label (no space allowed)
         // used if translation string 'ModuleXXXName' not found
@@ -66,7 +66,7 @@ class modSubtotal extends DolibarrModules
         $this->description = "Module permettant l'ajout de sous-totaux et sous-totaux intermédiaires et le déplacement d'une ligne aisée de l'un dans l'autre";
         // Possible values for version are: 'development', 'experimental' or version
 
-        $this->version = '3.23.5';
+        $this->version = '2024.03.04';
 
 
 		// Url to the file with your last numberversion of this module
